@@ -1,0 +1,6 @@
+display_name: "GZH Markdown Generator 2.0"
+short_description: "Generate natural WeChat technical tutorials with concise principles"
+default_prompt: >
+  Use $gzh-markdown to ask whether to include a concise core-principle section,
+  then turn the supplied previous/current/next tutorial materials into a
+  humanized WeChat technical article.
