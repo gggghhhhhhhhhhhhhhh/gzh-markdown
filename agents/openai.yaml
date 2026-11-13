@@ -1,6 +1,10 @@
-display_name: "GZH Markdown Generator 2.0"
-short_description: "Generate natural WeChat technical tutorials with concise principles"
+﻿display_name: GZH Markdown Generator
+short_description: Auto-generate WeChat public account markdown articles from code scripts or tutorials
 default_prompt: >
-  Use $gzh-markdown to ask whether to include a concise core-principle section,
-  then turn the supplied previous/current/next tutorial materials into a
-  humanized WeChat technical article.
+  Please provide three files:
+  1. The previous WeChat article (URL or local text) so I can learn your writing style
+  2. The current content/script to convert into a markdown article
+  3. The next content/script for the "下期预告" section preview
+
+  I will analyze your writing style, structure the content into logical steps with explanations,
+  and generate a complete markdown file ready for your public account.

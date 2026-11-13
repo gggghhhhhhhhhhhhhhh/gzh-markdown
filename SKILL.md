@@ -1,126 +1,83 @@
----
-name: gzh-markdown
+﻿---
+name: gzh_markdown
 description: >
-  Generate natural Chinese WeChat public-account Markdown tutorials from code
-  scripts or tutorial material. Version 2.0 asks whether to include a concise
-  core-principle section, explains decision-critical parameters, and always
-  applies humanizer-zh after drafting. Use for requests such as "生成公众号
-  markdown", "写推文", "公众号文章", or "gzh_markdown".
+  Automatically generates Chinese WeChat public account (公众号) markdown articles from code scripts or tutorial content.
+  Use when the user wants to convert technical tutorial material into formatted WeChat articles, providing: (1) a previous article to learn writing style, (2) the current content/script to convert, and (3) a next content/script for the preview section.
+  Typical trigger phrases: "生成公众号markdown", "写推文", "生成推文", "公众号文章", "gzh_markdown".
 ---
 
-# 微信公众号技术推文生成器（v2.0）
+# WeChat Public Account Markdown Generator (公众号 Markdown 生成器)
 
-将代码脚本或技术教程整理成微信公众号推文 Markdown。文章要能讲清技术，
-但正文必须像真实的技术分享，而不是模板化的 AI 文章。
+Generate WeChat public account markdown articles from code scripts or tutorial content.
 
-## 不可跳过的流程
+## Workflow
 
-### 1. 先询问是否介绍核心原理
+### 1. Receive Three Inputs
 
-开始写稿前，先问用户：
+- **上次推文** (Previous article): A WeChat URL or local text file. Learn the writing framework, tone, and formatting style.
+- **本次推文** (Current content): The main script or content file to convert into a markdown article.
+- **下次推文** (Next content): The script or content for the next issue. Extract key topics for "下期预告".
 
-> 本章节要不要介绍这个核心技术原理？
+### 2. Analyze Writing Style from Previous Article
 
-等待用户回答后再继续。不要在未确认时自行加入或删除原理部分。
+Extract:
 
-- 用户回答“要”：在简介后加入一个简短的“原理速览”小节。
-- 用户回答“不要”：跳过该小节，直接进入操作步骤。
+- **Structure**: 简介 → Step 1..N → 下期预告 → 参考文献
+- **Tone**: Conversational, tutorial-style Chinese with emoji decorations
+- **Formatting patterns**:
+  - Steps numbered with Chinese numerals + emoji
+  - Code blocks use ` ``` ` — **never `<pre>` tags** (WeChat corrupts them)
+  - Key concepts highlighted: `<span style="color:#C0482C;font-weight:bold;">text</span>`
+  - Tips/warnings with `⚠️`, concepts with `💡` `🔍` `🎯`
+  - Citations: `Author et al. (Year)` inline, numbered list in 参考文献
 
-原理部分只写一段，通常 3–5 句话。讲清输入、核心思路、如何得到结果以及结果
-表示什么，不写发展史、公式推导、百科式背景或连续类比。例如 WGCNA 只需说明：
-基因表达相关性构建加权网络，经 power 强化强相关、TOM 衡量共同连接，再聚类成
-模块并关联分组。
+### 3. Generate Markdown Article
 
-### 2. 接收三份输入
+#### Mandatory Formatting Rules
 
-- **上次推文**：公众号链接或本地文本，用于学习结构、语气和排版。
-- **本次推文**：本次脚本或教程内容。
-- **下次推文**：下一期脚本或内容，用于“下期预告”。
+1. **Headers**: ALL section headers use `**<span style="font-size:22px">标题</span>**` — bold, 22pt.
+2. **Code Blocks**: ALL code in ` ``` ` blocks. **Never `<pre>`**.
+3. **Key Content Highlighting**: `<span style="color:#C0482C;font-weight:bold;">text</span>` for important concepts.
 
-如果缺少会影响成稿的输入，直接向用户索取，不要编造上次文风或下次内容。
+#### Section Structure
 
-### 3. 分析上次推文
+**Title**: `**<span style="font-size:22px">系列名N：English subtitle</span>**`
 
-提取写作结构、段落节奏、称呼方式、代码讲解习惯、重点标记方式和常用收尾。
-学习风格即可，不照搬固定句式。
+**简介**:
+- `📖 上期回顾：` recap previous article
+- Describe this issue's content
+- Explain key technical concepts with citations
+- Call-to-action: `✉️ 关注本公众号，后台发送关键词"...N"`
 
-### 4. 生成初稿
+**Steps**:
+- `**<span style="font-size:22px">📦 一、标题</span>**`
+- Prose description + ` ``` ` code + technical explanations
+- Detailed explanation for complex concepts, skip simple ones
+- Separate steps with `---`
+- 4-7 steps per article
 
-默认结构：
+**下期预告**:
+- `**<span style="font-size:22px">🔜 下期预告</span>**`
+- Brief `✅` bullet points from next content
+- End: `👉 关注更新，不迷路`
 
-1. 标题
-2. 简介：上期回顾、本期目标和必要的概念铺垫
-3. 原理速览：仅在用户确认需要时出现
-4. 4–7 个操作步骤
-5. 下期预告
-6. 参考文献
+**参考文献**:
+- `**<span style="font-size:22px">📚 参考文献</span>**`
+- Numbered: `Author, I., et al. (Year). Title. Journal, Volume(Issue), Pages.`
 
-每一步先用一小段话说明目的，再放代码，最后解释这段代码解决了什么问题。
-步骤之间用分隔线隔开。
+### 4. Output
 
-#### 重点参数必须讲清
+Save as `推文_第N期.md`.
 
-代码块之后，只展开真正影响分析方法、模型或结论的参数。对每个重点参数说明：
+## Style Quick Reference
 
-- 它控制什么；
-- 为什么本例选择这个值；
-- 用户换数据或换场景时应如何判断是否修改。
+| Element | Format |
+|---------|--------|
+| Code | ` ``` ` blocks (never `<pre>`) |
+| Header | `**<span style="font-size:22px">text</span>**` |
+| Highlight | `<span style="color:#C0482C;font-weight:bold;">text</span>` |
+| Citations | `Author et al. (Year)` inline |
 
-典型重点参数包括 WGCNA 的 `power`、无标度拟合阈值 `R² = 0.8`、
-`networkType`、纳入基因数、模块最小基因数、模块合并高度和 hub 基因阈值。
-例如，`power` 决定相关性被放大到什么程度，`R² ≥ 0.8` 是常见的无标度网络
-筛选门槛，当前数据选 7 是因为它是首个达到该阈值的最小 power。
+### Emojis
 
-读取文件、保存路径、画布尺寸、普通坐标轴名称等简单代码，不单独占用篇幅。
-重点参数也要简短，避免把一段解释扩写成教程。
-
-### 5. 强制使用 humanizer-zh
-
-完整初稿写完后，调用 `humanizer-zh` 对正文进行二次编辑，再交付最终稿。
-
-处理目标：
-
-- 去掉 AI 常见的空洞总结、机械排比、夸张意义、万能过渡句和过度解释；
-- 调整句子长短和段落节奏；
-- 让语气更接近日常技术分享，直接讲经验、取舍和判断依据；
-- 保留作者观点和必要的口语感，不写成宣传稿或教科书。
-
-只修改说明性正文。以下内容必须保持不变：
-
-- 代码块和行内代码；
-- 参数值、公式、数字、统计结果和结论；
-- 文献引用、链接和文件名；
-- 用户确定的文章结构与必要 Markdown 标记。
-
-人工化完成后，再检查一次代码块、标题层级和技术准确性。不得为了“自然”而
-改写参数含义、制造经验或删除关键限制。
-
-## 排版规则
-
-- 所有代码使用 Markdown 的 ` ``` ` 代码块，不使用 `<pre>`。
-- 一级板块标题使用：
-
-  `**<span style="font-size:22px">标题</span>**`
-
-- 关键概念可使用：
-
-  `<span style="color:#C0482C;font-weight:bold;">文字</span>`
-
-- 可用 emoji 区分步骤、提示、概念、警告、预告和文献，但不堆叠装饰。
-- 文献在正文中使用 `Author et al. (Year)` 的简写，文末给出编号列表。
-
-## 输出
-
-最终交付经过 `humanizer-zh` 处理的版本，保存为：
-
-```text
-推文_第N期.md
-```
-
-交付前确认：
-
-- 已询问并遵从用户关于“是否介绍核心原理”的选择；
-- 需要时只写了一段简短原理；
-- 影响分析判断的重点参数已经解释；
-- 简单代码没有被过度讲解；
-- 已执行 `humanizer-zh`，且技术内容和排版仍然正确。
+📦🗺️🌎🎲⚙️💾📊🔮 steps | 📖 review | 🎯💡🔍 concept | ⚠️ warning | 🔜 next | 📚 refs | ✉️ CTA | ✅ list
